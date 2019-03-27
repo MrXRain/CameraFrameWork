@@ -1,2 +1,2 @@
 # CameraFrameWork
-It's based on camera1,camera2,uvcCamera
+相机封装框架，其包含Camera1,Camera2,uvcCamera
