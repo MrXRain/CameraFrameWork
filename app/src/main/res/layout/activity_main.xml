@@ -23,6 +23,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:keepScreenOn="true"
+            app:cameraApiType="camera_3"
             app:cameraFacing="back"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -6,6 +6,7 @@ import android.view.Display;
 import android.view.Surface;
 import android.view.WindowManager;
 import com.core.camera.option.*;
+import com.core.camera.utils.Size;
 import com.core.camera.utils.WorkHandler;
 
 /**
@@ -17,12 +18,13 @@ public abstract class CameraController implements CameraPreview.PreviewCallback 
     protected final CameraCallback mCameraCallback;
     protected WorkHandler mHandler;
     protected CameraPreview mPreview;
-    private Context mContext;
+    protected Context mContext;
     protected final FrameManger mFrameManger;
     protected WhiteBalance mWhiteBalance;
     protected Hdr mHdr;
     protected Flash mFlash;
     protected PreviewSize mPreSize;
+    protected Size mSize;
 
     protected CameraController(Context context,CameraCallback callback) {
         mCameraCallback = callback;

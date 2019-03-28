@@ -18,6 +18,7 @@ import com.core.camera.origin.Camera2;
 import com.core.camera.preview.CameraSurfaceView;
 import com.core.camera.preview.CameraTextureView;
 import com.core.camera.utils.WorkHandler;
+import com.core.camera.uvc.Camera3;
 import com.terminus.camera.R;
 
 /**
@@ -62,7 +63,7 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
         WhiteBalance whiteBalance = WhiteBalance.fromValue(ta.getInteger(R.styleable.CameraView_cameraWhiteBalance, WhiteBalance.AUTO.value()));
         Hdr hdr = Hdr.fromValue(ta.getInteger(R.styleable.CameraView_cameraHdr, Hdr.DEFAULT.value()));
         Flash flash = Flash.fromValue(ta.getInteger(R.styleable.CameraView_cameraFlash, Flash.DEFAULT.value()));
-        PreviewSize previewSize = PreviewSize.fromValue(ta.getInteger(R.styleable.CameraView_CameraPreviewSize, PreviewSize.DEFAULT.value()));
+        PreviewSize previewSize = PreviewSize.fromValue(ta.getInteger(R.styleable.CameraView_cameraPreviewSize, PreviewSize.DEFAULT.value()));
 
         ta.recycle();
 
@@ -76,10 +77,12 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
     }
 
     private CameraController initCameraController(CameraType type) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && type == CameraType.CAMERA_TYPE_2) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && type == CameraType.CAMERA_2) {
             mCameraController = new Camera2(mContext, mCameraCallback);
-        } else {
+        } else if (type == CameraType.CAMERA_1){
             mCameraController = new Camera1(mContext, mCameraCallback);
+        } else if (type == CameraType.CAMERA_3) {
+            mCameraController = new Camera3(mContext, mCameraCallback);
         }
 
         return mCameraController;
@@ -187,4 +190,5 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
     private void setPreviewSize(PreviewSize previewSize) {
         mCameraController.setPreviewSize(previewSize);
     }
+
 }

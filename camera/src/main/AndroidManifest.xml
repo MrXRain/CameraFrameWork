@@ -2,5 +2,6 @@
           package="com.terminus.camera">
 
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.usb.host" />
 
 </manifest>

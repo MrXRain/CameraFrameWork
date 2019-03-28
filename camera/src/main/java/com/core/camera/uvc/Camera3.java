@@ -16,6 +16,7 @@ import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
+ * @author rain
  * @description UVC相机
  */
 public class Camera3 extends CameraController {
@@ -34,22 +35,21 @@ public class Camera3 extends CameraController {
 
     private byte[] mBuffer;
 
-    protected Camera3(Context context, CameraCallback callback) {
+    public Camera3(Context context, CameraCallback callback) {
         super(context, callback);
 
         mContext = context;
-        mUVCCamera = new UVCCamera();
         mCameraOptions = new CameraOptions();
         mapper3 = new Mapper.Mapper3();
     }
 
     private boolean isCameraConnect;
+
     @Override
     @WorkerThread
     protected void onStart() {
-        if (mUSBMonitor != null) {
-            mUSBMonitor.register();
-        }
+
+        mUVCCamera = new UVCCamera();
 
         mUSBMonitor = new USBMonitor(mContext, new USBMonitor.OnDeviceConnectListener() {
             @Override
@@ -65,7 +65,9 @@ public class Camera3 extends CameraController {
 
             @Override
             public void onConnect(UsbDevice usbDevice, USBMonitor.UsbControlBlock usbControlBlock, boolean b) {
-                mUVCCamera.open(usbControlBlock);
+                if (!isCameraConnect) {
+                    mUVCCamera.open(usbControlBlock);
+                }
                 isCameraConnect = true;
                 if (isCameraAvaliable()) {
                     bindSurface();
@@ -83,6 +85,8 @@ public class Camera3 extends CameraController {
 
             }
         });
+
+        mUSBMonitor.register();
     }
 
     private boolean isCameraAvaliable() {
@@ -108,25 +112,25 @@ public class Camera3 extends CameraController {
 
     @Override
     protected void setWhiteBalance(WhiteBalance whiteBalance) {
-
+        mWhiteBalance = whiteBalance;
     }
 
     @Override
     protected void setHdr(Hdr hdr) {
-
+        mHdr = hdr;
     }
 
     @Override
     protected void setFlash(Flash flash) {
-
+        mFlash = flash;
     }
 
     @Override
     protected void setPreviewSize(PreviewSize previewSize) {
         if (mCameraOptions.getSupport(previewSize)) {
             mSize = mapper3.getPreviewSize(previewSize);
-            mUVCCamera.setPreviewSize(mSize.width, mSize.height, UVCCamera.PIXEL_FORMAT_NV21);
-            mBuffer = new byte[mSize.width * mSize.height * ImageFormat.getBitsPerPixel(ImageFormat.NV21) / 8];
+            mUVCCamera.setPreviewSize(1280, 720, UVCCamera.PIXEL_FORMAT_NV21);
+            mBuffer = new byte[1280 * 720 * ImageFormat.getBitsPerPixel(ImageFormat.NV21) / 8];
         }
 
     }
@@ -146,6 +150,8 @@ public class Camera3 extends CameraController {
             mUVCCamera.setPreviewDisplay(mPreview.getSurface());
         }
 
+        mUVCCamera.setPreviewSize(1280, 720, UVCCamera.PIXEL_FORMAT_NV21);
+        mBuffer = new byte[1280 * 720 * ImageFormat.getBitsPerPixel(ImageFormat.NV21) / 8];
         mUVCCamera.startPreview();
 
         mUVCCamera.setFrameCallback(new IFrameCallback() {
@@ -166,6 +172,11 @@ public class Camera3 extends CameraController {
     @Override
     public void onSurfaceChanged() {
         mUVCCamera.stopPreview();
-        mUSBMonitor.unregister();
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                bindSurface();
+            }
+        });
     }
 }

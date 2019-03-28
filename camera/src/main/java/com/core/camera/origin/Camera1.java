@@ -1,10 +1,13 @@
 package com.core.camera.origin;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.support.annotation.WorkerThread;
+import android.support.v4.app.ActivityCompat;
 import android.view.SurfaceHolder;
 import com.core.camera.*;
 import com.core.camera.option.*;
@@ -26,11 +29,11 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
 
     private Mapper.Mapper1 mapper1;
 
-    private Size mSize;
-
     private byte[] mPreBuffer;
 
     private boolean isOpen;
+
+    private Camera.Parameters parameters;
 
     public Camera1(Context context, CameraCallback callback) {
         super(context, callback);
@@ -42,14 +45,18 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
     @WorkerThread
     protected void onStart() {
         try {
+            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
             if (mCamera == null) {
                 mCamera = Camera.open(mCameraID);
             }
 
-            Camera.Parameters parameters = mCamera.getParameters();
-            mCameraOptions = new CameraOptions(parameters, mCamera);
+            parameters = mCamera.getParameters();
+            mCameraOptions = new CameraOptions(parameters);
 
-            applyCameraParams(parameters);
+            applyCameraParams();
 
             isOpen = true;
 
@@ -61,7 +68,7 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
         }
     }
 
-    private void applyCameraParams(Camera.Parameters parameters) {
+    private void applyCameraParams() {
         if (mCameraOptions.getSupport(mWhiteBalance)) {
             String wbMode = mapper1.getWhiteBalance(mWhiteBalance);
             parameters.setWhiteBalance(wbMode);
@@ -82,6 +89,7 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
             parameters.setPreviewSize(mSize.getWidth(), mSize.getHeight());
         }
 
+        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
         parameters.setPreviewFormat(ImageFormat.NV21);
         parameters.setPictureFormat(ImageFormat.JPEG);
 
@@ -120,13 +128,7 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
         mWhiteBalance = whiteBalance;
 
         if (isCameraAvaliable()) {
-            Camera.Parameters parameters = mCamera.getParameters();
-
-            if (mCameraOptions.getSupport(whiteBalance)) {
-                String mWb = mapper1.getWhiteBalance(whiteBalance);
-                parameters.setWhiteBalance(mWb);
-            }
-            mCamera.setParameters(parameters);
+            applyCameraParams();
         }
     }
 
@@ -135,13 +137,7 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
         mHdr = hdr;
 
         if (isCameraAvaliable()) {
-            Camera.Parameters parameters = mCamera.getParameters();
-
-            if (mCameraOptions.getSupport(hdr)) {
-                String mHdr = mapper1.getHdr(hdr);
-                parameters.setSceneMode(mHdr);
-            }
-            mCamera.setParameters(parameters);
+            applyCameraParams();
         }
     }
 
@@ -150,13 +146,7 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
         mFlash = flash;
 
         if (isCameraAvaliable()) {
-            Camera.Parameters parameters = mCamera.getParameters();
-
-            if (mCameraOptions.getSupport(flash)) {
-                String mFlash = mapper1.getFlash(flash);
-                parameters.setFlashMode(mFlash);
-            }
-            mCamera.setParameters(parameters);
+            applyCameraParams();
         }
     }
 
@@ -175,13 +165,26 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
         mCamera.addCallbackBuffer(mPreBuffer);
 
         Frame frame = mFrameManger.getframe(data, mSize.getWidth(), mSize.getHeight(), ImageFormat.NV21);
-        mCameraCallback.dispathFrame(frame);
+        if (mCameraCallback == null) {
+            try {
+                throw new Exception("cameraCallback must init");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            mCameraCallback.dispathFrame(frame);
+        }
     }
 
     @Override
     public void onSurfaceAvailable() {
         if (isCameraAvaliable()) {
-            bindSurface();
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    bindSurface();
+                }
+            });
         }
     }
 

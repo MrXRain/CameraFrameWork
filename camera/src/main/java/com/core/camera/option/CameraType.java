@@ -9,14 +9,19 @@ public enum CameraType {
     /**
      * Camera1
      */
-    CAMERA_TYPE_1(1),
+    CAMERA_1(1),
 
     /**
      * Camera2
      */
-    CAMERA_TYPE_2(2);
+    CAMERA_2(2),
 
-    public static final CameraType DEFAULT = CAMERA_TYPE_1;
+    /**
+     * uvc camera
+     */
+    CAMERA_3(3);
+
+    public static final CameraType DEFAULT = CAMERA_1;
 
     private int value;
 
