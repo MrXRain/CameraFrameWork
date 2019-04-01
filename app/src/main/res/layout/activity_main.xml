@@ -17,13 +17,29 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
     <com.core.camera.CameraView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/camera"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHeight_percent="0.5"
             android:keepScreenOn="true"
-            app:cameraApiType="camera_3"
-            app:cameraFacing="back"/>
+            app:cameraApiType="camera_2"
+            app:cameraFacing="front"
+            app:cameraFlash="off"/>
+
+    <Button
+            android:id="@+id/btn_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/camera"
+            app:layout_constraintVertical_bias="0.5"
+            app:layout_constraintTop_toTopOf="parent"
+            android:text="switch"/>
 
 </android.support.constraint.ConstraintLayout>

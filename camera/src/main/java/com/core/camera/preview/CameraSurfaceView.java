@@ -4,7 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.*;
 import com.core.camera.CameraPreview;
-import com.terminus.camera.R;
+import com.rain.camera.R;
 
 public class CameraSurfaceView extends CameraPreview<SurfaceView, SurfaceHolder> {
 

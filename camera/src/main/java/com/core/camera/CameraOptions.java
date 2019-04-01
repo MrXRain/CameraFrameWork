@@ -35,7 +35,7 @@ public class CameraOptions {
         Mapper.Mapper2 mapper2 = new Mapper.Mapper2();
 
         try {
-
+            // Facing
             String[] cameraNumbers = cameraManager.getCameraIdList();
             for (int i = 0; i < cameraNumbers.length; i++) {
                 Facing value = mapper2.put(Facing.class, i);
@@ -46,20 +46,27 @@ public class CameraOptions {
 
             // PreviewSize
             StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
-            android.util.Size[] sizes = map.getOutputSizes(ImageFormat.JPEG);
-            for (android.util.Size size : sizes) {
-                Size mSize = new Size(size.getWidth(), size.getHeight());
-                PreviewSize value = mapper2.put(PreviewSize.class, mSize);
-                if (value != null) supportSize.add(value);
+            if (map != null) {
+                android.util.Size[] sizes = map.getOutputSizes(ImageFormat.JPEG);
+                if (sizes != null) {
+                    for (android.util.Size size : sizes) {
+                        Size mSize = new Size(size.getWidth(), size.getHeight());
+                        PreviewSize value = mapper2.put(PreviewSize.class, mSize);
+                        if (value != null) supportSize.add(value);
+                    }
+                }
             }
 
-            if (cameraCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE).booleanValue()) {
-                supportedFlash.add(Flash.AUTO);
-                supportedFlash.add(Flash.OFF);
-                supportedFlash.add(Flash.ON);
-                supportedFlash.add(Flash.TORCH);
+            // Flash
+            int[] flashs = cameraCharacteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_MODES);
+            if (flashs != null) {
+                for (int flash : flashs) {
+                    Flash value = mapper2.put(Flash.class, flash);
+                    if (value != null) supportedFlash.add(value);
+                }
             }
 
+            // whiteBalance
             int[] wbModes = cameraCharacteristics.get(CameraCharacteristics.CONTROL_AWB_AVAILABLE_MODES);
             if (wbModes != null) {
                 for (int mode : wbModes) {
@@ -68,6 +75,7 @@ public class CameraOptions {
                 }
             }
 
+            // Hdr
             int[] hdrModes = cameraCharacteristics.get(CameraCharacteristics.CONTROL_AVAILABLE_SCENE_MODES);
             if (hdrModes != null) {
                 for (int mode : hdrModes) {

@@ -14,8 +14,10 @@ import android.support.annotation.RequiresApi;
 import android.support.annotation.WorkerThread;
 import android.support.v4.app.ActivityCompat;
 import android.view.Surface;
+import android.widget.Toast;
 import com.core.camera.*;
 import com.core.camera.option.*;
+import com.rain.camera.R;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -33,14 +35,9 @@ public class Camera2 extends CameraController {
     private String mCameraId;
 
     /**
-     * 预览数据流
+     * the byteArray of preview
      */
     private ImageReader mImageReader;
-
-    /**
-     * 照片数据流
-     */
-    private ImageReader mPictureReader;
 
     private CameraCaptureSession mPreviewSession;
 
@@ -54,8 +51,8 @@ public class Camera2 extends CameraController {
 
     private Mapper.Mapper2 mapper2;
 
-    public Camera2(Context context, CameraCallback callback) {
-        super(context, callback);
+    public Camera2(Context context) {
+        super(context);
 
         mCameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
         mapper2 = new Mapper.Mapper2();
@@ -66,6 +63,7 @@ public class Camera2 extends CameraController {
     protected void onStart() {
         try {
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(mContext, R.string.camera_permission,Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -208,11 +206,15 @@ public class Camera2 extends CameraController {
 
     @Override
     protected void onPause() {
-
+        stopCamera();
     }
 
     @Override
     protected void onStop() {
+        stopCamera();
+    }
+
+    private void stopCamera() {
         if (mPreviewSession != null && mCameraDevice != null && mImageReader != null) {
             mCameraDevice.close();
             mPreviewSession.close();
@@ -221,11 +223,12 @@ public class Camera2 extends CameraController {
             mPreviewSession = null;
             mCameraDevice = null;
         }
-
     }
 
     @Override
     protected void setFacing(Facing facing) {
+        mFacing = facing;
+
         mCameraId = String.valueOf(facing.value());
     }
 

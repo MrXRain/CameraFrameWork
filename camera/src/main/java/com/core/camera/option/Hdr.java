@@ -6,8 +6,14 @@ package com.core.camera.option;
  */
 public enum Hdr implements Control {
 
+    /**
+     * OFF mode
+     */
     OFF(0),
 
+    /**
+     * ON mode
+     */
     ON(1);
 
     private int value;

@@ -2,10 +2,11 @@ package com.core.camera;
 
 import android.hardware.Camera;
 import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureRequest;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import com.core.camera.option.*;
 import com.core.camera.utils.Size;
+import com.serenegiant.usb.UVCCamera;
 
 import java.util.TreeMap;
 
@@ -29,6 +30,16 @@ public abstract class Mapper {
 
     public static class Mapper3 extends Mapper {
 
+        private static final TreeMap<WhiteBalance, Integer> WB = new TreeMap<>();
+        private static final TreeMap<PreviewSize, Size> SIZE = new TreeMap<>();
+
+        static {
+            WB.put(WhiteBalance.AUTO, UVCCamera.PU_WB_TEMP_AUTO);
+            SIZE.put(PreviewSize.V480P, new Size(640, 480));
+            SIZE.put(PreviewSize.V720P, new Size(1280, 720));
+            SIZE.put(PreviewSize.V1080P, new Size(1920, 1080));
+        }
+
         @Override
         public <T> T put(Class<T> cls, Object obj) {
             return null;
@@ -41,7 +52,7 @@ public abstract class Mapper {
 
         @Override
         public <T> T getWhiteBalance(WhiteBalance whiteBalance) {
-            return null;
+            return (T) WB.get(whiteBalance);
         }
 
         @Override
@@ -56,10 +67,11 @@ public abstract class Mapper {
 
         @Override
         public <T> T getPreviewSize(PreviewSize previewSize) {
-            return null;
+            return (T) SIZE.get(previewSize);
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     public static class Mapper2 extends Mapper {
 
         private static final TreeMap<PreviewSize, Size> SIZE = new TreeMap<>();

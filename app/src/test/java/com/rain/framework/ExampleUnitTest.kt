@@ -1,4 +1,4 @@
-package com.terminus.framework
+package com.rain.framework
 
 import org.junit.Test
 

@@ -9,7 +9,6 @@ import android.content.res.TypedArray;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 import com.core.camera.option.*;
@@ -19,7 +18,7 @@ import com.core.camera.preview.CameraSurfaceView;
 import com.core.camera.preview.CameraTextureView;
 import com.core.camera.utils.WorkHandler;
 import com.core.camera.uvc.Camera3;
-import com.terminus.camera.R;
+import com.rain.camera.R;
 
 /**
  * @author rain
@@ -28,8 +27,6 @@ import com.terminus.camera.R;
 public class CameraView extends FrameLayout implements LifecycleObserver {
 
     private CameraController mCameraController;
-
-    private CameraCallback mCameraCallback;
 
     private Context mContext;
 
@@ -54,8 +51,10 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
 
     /**
      * init Param
+     * @param context the view
+     * @param attrs A collection of attributes
      */
-    private void init(Context context, AttributeSet attrs) {
+    private void init(@NonNull Context context,AttributeSet attrs) {
         setWillNotDraw(false);
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CameraView, 0, 0);
         CameraType type = CameraType.fromValue(ta.getInteger(R.styleable.CameraView_cameraApiType, CameraType.DEFAULT.value()));
@@ -78,11 +77,11 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
 
     private CameraController initCameraController(CameraType type) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && type == CameraType.CAMERA_2) {
-            mCameraController = new Camera2(mContext, mCameraCallback);
-        } else if (type == CameraType.CAMERA_1){
-            mCameraController = new Camera1(mContext, mCameraCallback);
+            mCameraController = new Camera2(mContext);
+        } else if (type == CameraType.CAMERA_1) {
+            mCameraController = new Camera1(mContext);
         } else if (type == CameraType.CAMERA_3) {
-            mCameraController = new Camera3(mContext, mCameraCallback);
+            mCameraController = new Camera3(mContext);
         }
 
         return mCameraController;
@@ -100,6 +99,7 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
+        mCameraController.mFrameManger.release();
         WorkHandler.destroy();
     }
 
@@ -114,7 +114,7 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
     }
 
     public void setCameraCallback(CameraCallback cameraCallback) {
-        this.mCameraCallback = cameraCallback;
+        mCameraController.mCameraCallback = cameraCallback;
     }
 
     public void setLifecycleOwner(LifecycleOwner owner) {
@@ -141,7 +141,32 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
     }
 
     /**
-     * @param facing 摄像头的ID
+     * switch cameraID
+     * It is used camera1、camera2
+     */
+    public void switchCamera() {
+        if (mCameraController instanceof Camera3) {
+            return;
+        }
+
+        Facing mCameraId = mCameraController.getFacing();
+        switch (mCameraId) {
+            case BACK:
+                setFacing(Facing.FRONT);
+                break;
+            case FRONT:
+                setFacing(Facing.BACK);
+                break;
+            default:
+                break;
+        }
+
+        destroy();
+        start();
+    }
+
+    /**
+     * @param facing cameraId
      * @see Facing#FRONT
      * @see Facing#BACK
      */
@@ -150,7 +175,15 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
     }
 
     /**
-     * @param whiteBalance 白平衡模式
+     * @return the cameraId
+     * @see Facing
+     */
+    public Facing getFacing() {
+        return mCameraController.getFacing();
+    }
+
+    /**
+     * @param whiteBalance Whitebalance mode
      * @see WhiteBalance#AUTO
      * @see WhiteBalance#CLOUDY
      * @see WhiteBalance#DAYLIGHT
@@ -162,7 +195,15 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
     }
 
     /**
-     * @param hdr hdr模式
+     * @return the whiteBalance mode
+     * @see WhiteBalance
+     */
+    public WhiteBalance getWhiteBalance() {
+        return mCameraController.getWhiteBalance();
+    }
+
+    /**
+     * @param hdr hdr mode
      * @see Hdr#OFF
      * @see Hdr#ON
      */
@@ -171,7 +212,15 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
     }
 
     /**
-     * @param flash 闪光灯模式
+     * @return the hdr mode
+     * @see Hdr
+     */
+    public Hdr getHdr() {
+        return mCameraController.getHdr();
+    }
+
+    /**
+     * @param flash Flash mode
      * @see Flash#OFF
      * @see Flash#ON
      * @see Flash#AUTO
@@ -182,13 +231,29 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
     }
 
     /**
-     * @param previewSize 预览尺寸
+     * @return the flash mode
+     * @see Flash
+     */
+    public Flash getFlash() {
+        return mCameraController.getFlash();
+    }
+
+    /**
+     * @param previewSize Preview Size
      * @see PreviewSize#V480P
      * @see PreviewSize#V720P
      * @see PreviewSize#V1080P
      */
-    private void setPreviewSize(PreviewSize previewSize) {
+    public void setPreviewSize(PreviewSize previewSize) {
         mCameraController.setPreviewSize(previewSize);
+    }
+
+    /**
+     * @return the size of preview
+     * @see PreviewSize
+     */
+    public PreviewSize getPreviewSize() {
+        return mCameraController.getPreviewSize();
     }
 
 }

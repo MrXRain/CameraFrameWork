@@ -1,4 +1,4 @@
-package com.terminus.camera;
+package com.rain.camera;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

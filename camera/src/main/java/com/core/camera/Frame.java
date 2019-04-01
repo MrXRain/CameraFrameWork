@@ -8,7 +8,7 @@ package com.core.camera;
 public class Frame {
 
     private byte[] mData;
-    private int mWidth,mHeight;
+    private int mWidth, mHeight;
     private int mFormat = -1;
 
     public void setData(byte[] data, int width, int height, int format) {
@@ -23,5 +23,21 @@ public class Frame {
         mWidth = -1;
         mHeight = -1;
         mFormat = -1;
+    }
+
+    public final byte[] getData() {
+        return mData;
+    }
+
+    public final int getWidth() {
+        return mWidth;
+    }
+
+    public final int getHeight() {
+        return mHeight;
+    }
+
+    public final int getFormat() {
+        return mFormat;
     }
 }

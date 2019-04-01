@@ -7,12 +7,12 @@ package com.core.camera.option;
 public enum Facing implements Control {
 
     /**
-     * 前置摄像头
+     * front camera
      */
     FRONT(1),
 
     /**
-     * 后置摄像头
+     * back camera
      */
     BACK(0);
 

@@ -5,12 +5,12 @@ import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.usb.UsbDevice;
 import android.support.annotation.WorkerThread;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import com.core.camera.*;
 import com.core.camera.option.*;
+import com.core.camera.utils.Size;
 import com.serenegiant.usb.*;
-import com.terminus.camera.R;
+import com.rain.camera.R;
 
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -35,8 +35,8 @@ public class Camera3 extends CameraController {
 
     private byte[] mBuffer;
 
-    public Camera3(Context context, CameraCallback callback) {
-        super(context, callback);
+    public Camera3(Context context) {
+        super(context);
 
         mContext = context;
         mCameraOptions = new CameraOptions();
@@ -70,6 +70,7 @@ public class Camera3 extends CameraController {
                 }
                 isCameraConnect = true;
                 if (isCameraAvaliable()) {
+                    applyCameraParam();
                     bindSurface();
                 }
             }
@@ -89,8 +90,16 @@ public class Camera3 extends CameraController {
         mUSBMonitor.register();
     }
 
+    private void applyCameraParam() {
+        int value = mapper3.getWhiteBalance(mWhiteBalance);
+        mUVCCamera.setWhiteBlance(value);
+
+        mUVCCamera.setPreviewSize(mSize.getWidth(), mSize.getHeight(), UVCCamera.PIXEL_FORMAT_NV21);
+        mBuffer = new byte[mSize.getWidth() * mSize.getHeight() * ImageFormat.getBitsPerPixel(ImageFormat.NV21) / 8];
+    }
+
     private boolean isCameraAvaliable() {
-        return mPreview != null && mPreview.isReady() && isCameraConnect;
+        return mPreview != null && mPreview.isReady() && isCameraConnect && mUVCCamera != null;
     }
 
     @Override
@@ -113,6 +122,10 @@ public class Camera3 extends CameraController {
     @Override
     protected void setWhiteBalance(WhiteBalance whiteBalance) {
         mWhiteBalance = whiteBalance;
+
+        if (isCameraAvaliable()) {
+            applyCameraParam();
+        }
     }
 
     @Override
@@ -127,12 +140,7 @@ public class Camera3 extends CameraController {
 
     @Override
     protected void setPreviewSize(PreviewSize previewSize) {
-        if (mCameraOptions.getSupport(previewSize)) {
-            mSize = mapper3.getPreviewSize(previewSize);
-            mUVCCamera.setPreviewSize(1280, 720, UVCCamera.PIXEL_FORMAT_NV21);
-            mBuffer = new byte[1280 * 720 * ImageFormat.getBitsPerPixel(ImageFormat.NV21) / 8];
-        }
-
+        mSize = mapper3.getPreviewSize(previewSize);
     }
 
     @Override
@@ -163,7 +171,7 @@ public class Camera3 extends CameraController {
                 }
                 byteBuffer.get(mBuffer, 0, n);
 
-                Frame frame = mFrameManger.getframe(mBuffer, mSize.width, mSize.height, ImageFormat.NV21);
+                Frame frame = mFrameManger.getframe(mBuffer, mSize.getWidth(), mSize.getHeight(), ImageFormat.NV21);
                 mCameraCallback.dispathFrame(frame);
             }
         }, UVCCamera.PIXEL_FORMAT_NV21);

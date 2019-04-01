@@ -5,7 +5,7 @@ import android.graphics.SurfaceTexture;
 import android.support.annotation.NonNull;
 import android.view.*;
 import com.core.camera.CameraPreview;
-import com.terminus.camera.R;
+import com.rain.camera.R;
 
 /**
  * @author rain

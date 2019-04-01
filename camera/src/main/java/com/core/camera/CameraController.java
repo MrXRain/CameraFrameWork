@@ -15,7 +15,7 @@ import com.core.camera.utils.WorkHandler;
  */
 public abstract class CameraController implements CameraPreview.PreviewCallback {
 
-    protected final CameraCallback mCameraCallback;
+    protected CameraCallback mCameraCallback;
     protected WorkHandler mHandler;
     protected CameraPreview mPreview;
     protected Context mContext;
@@ -25,9 +25,9 @@ public abstract class CameraController implements CameraPreview.PreviewCallback 
     protected Flash mFlash;
     protected PreviewSize mPreSize;
     protected Size mSize;
+    protected Facing mFacing;
 
-    protected CameraController(Context context,CameraCallback callback) {
-        mCameraCallback = callback;
+    protected CameraController(Context context) {
         mHandler = WorkHandler.get("CameraWork");
         mContext = context;
         mFrameManger = new FrameManger(2);
@@ -45,7 +45,6 @@ public abstract class CameraController implements CameraPreview.PreviewCallback 
                 onStart();
             }
         });
-
     }
 
     final void stopCamera() {
@@ -55,7 +54,6 @@ public abstract class CameraController implements CameraPreview.PreviewCallback 
                 onStop();
             }
         });
-
     }
 
     final void stopPreview() {
@@ -82,6 +80,26 @@ public abstract class CameraController implements CameraPreview.PreviewCallback 
     protected abstract void setFlash(Flash flash);
 
     protected abstract void setPreviewSize(PreviewSize previewSize);
+
+    final Facing getFacing() {
+        return mFacing;
+    }
+
+    final WhiteBalance getWhiteBalance() {
+        return mWhiteBalance;
+    }
+
+    final Hdr getHdr() {
+        return mHdr;
+    }
+
+    final Flash getFlash() {
+        return mFlash;
+    }
+
+    final PreviewSize getPreviewSize() {
+        return mPreSize;
+    }
 
     /**
      * 根据摄像头Id来设置屏幕旋转角度

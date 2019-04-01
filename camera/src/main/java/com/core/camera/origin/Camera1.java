@@ -9,9 +9,11 @@ import android.hardware.Camera;
 import android.support.annotation.WorkerThread;
 import android.support.v4.app.ActivityCompat;
 import android.view.SurfaceHolder;
+import android.widget.Toast;
 import com.core.camera.*;
 import com.core.camera.option.*;
 import com.core.camera.utils.Size;
+import com.rain.camera.R;
 
 import java.io.IOException;
 
@@ -35,8 +37,8 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
 
     private Camera.Parameters parameters;
 
-    public Camera1(Context context, CameraCallback callback) {
-        super(context, callback);
+    public Camera1(Context context) {
+        super(context);
 
         mapper1 = new Mapper.Mapper1();
     }
@@ -46,6 +48,7 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
     protected void onStart() {
         try {
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(mContext, R.string.camera_permission,Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -89,7 +92,7 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
             parameters.setPreviewSize(mSize.getWidth(), mSize.getHeight());
         }
 
-        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_FIXED);
         parameters.setPreviewFormat(ImageFormat.NV21);
         parameters.setPictureFormat(ImageFormat.JPEG);
 
@@ -120,6 +123,7 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
 
     @Override
     protected void setFacing(Facing facing) {
+        mFacing = facing;
         mCameraID = facing.value();
     }
 

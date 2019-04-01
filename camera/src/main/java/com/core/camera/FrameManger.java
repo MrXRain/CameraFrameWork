@@ -1,7 +1,5 @@
 package com.core.camera;
 
-import android.hardware.Camera;
-
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -12,7 +10,7 @@ public class FrameManger {
 
     private LinkedBlockingQueue<Frame> mQueue;
 
-    public FrameManger(int poolsize) {
+    FrameManger(int poolsize) {
         mQueue = new LinkedBlockingQueue<>(poolsize);
     }
 
