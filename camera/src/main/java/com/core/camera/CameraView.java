@@ -59,7 +59,7 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.CameraView, 0, 0);
         CameraType type = CameraType.fromValue(ta.getInteger(R.styleable.CameraView_cameraApiType, CameraType.DEFAULT.value()));
         Facing facing = Facing.fromValue(ta.getInteger(R.styleable.CameraView_cameraFacing, Facing.DEFAULT.value()));
-        WhiteBalance whiteBalance = WhiteBalance.fromValue(ta.getInteger(R.styleable.CameraView_cameraWhiteBalance, WhiteBalance.AUTO.value()));
+        WhiteBalance whiteBalance = WhiteBalance.fromValue(ta.getInteger(R.styleable.CameraView_cameraWhiteBalance, WhiteBalance.DEFAULT.value()));
         Hdr hdr = Hdr.fromValue(ta.getInteger(R.styleable.CameraView_cameraHdr, Hdr.DEFAULT.value()));
         Flash flash = Flash.fromValue(ta.getInteger(R.styleable.CameraView_cameraFlash, Flash.DEFAULT.value()));
         PreviewSize previewSize = PreviewSize.fromValue(ta.getInteger(R.styleable.CameraView_cameraPreviewSize, PreviewSize.DEFAULT.value()));

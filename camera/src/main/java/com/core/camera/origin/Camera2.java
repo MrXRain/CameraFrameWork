@@ -178,11 +178,7 @@ public class Camera2 extends CameraController {
 
                 Frame frame = mFrameManger.getframe(data, mSize.getWidth(), mSize.getHeight(), ImageFormat.NV21);
                 if (mCameraCallback == null) {
-                    try {
-                        throw new Exception("cameraCallback must init");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    throw new RuntimeException("cameraCallback must init");
                 } else {
                     mCameraCallback.dispathFrame(frame);
                 }
