@@ -14,6 +14,7 @@ import android.support.annotation.RequiresApi;
 import android.support.annotation.WorkerThread;
 import android.support.v4.app.ActivityCompat;
 import android.view.Surface;
+import android.view.TextureView;
 import android.widget.Toast;
 import com.core.camera.*;
 import com.core.camera.option.*;
@@ -274,16 +275,11 @@ public class Camera2 extends CameraController {
 
     @Override
     public void onSurfaceChanged() {
-        try {
-            mPreviewSession.stopRepeating();
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    bindSurface();
-                }
-            });
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                bindSurface();
+            }
+        });
     }
 }

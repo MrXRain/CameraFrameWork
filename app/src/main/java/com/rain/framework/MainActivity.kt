@@ -23,11 +23,11 @@ class MainActivity : AppCompatActivity() {
         val TAG = "Camera"
         val flashList = arrayListOf(Flash.OFF, Flash.ON, Flash.TORCH, Flash.AUTO)
         val wbList = arrayListOf(
+            WhiteBalance.AUTO,
             WhiteBalance.CLOUDY,
             WhiteBalance.DAYLIGHT,
             WhiteBalance.FLUORESCENT,
-            WhiteBalance.INCANDESCENT,
-            WhiteBalance.AUTO
+            WhiteBalance.INCANDESCENT
         )
         val hdrList = arrayListOf(Hdr.OFF, Hdr.ON)
     }

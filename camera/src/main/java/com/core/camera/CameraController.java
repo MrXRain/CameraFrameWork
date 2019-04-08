@@ -1,9 +1,12 @@
 package com.core.camera;
 
 import android.content.Context;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.hardware.Camera;
 import android.view.Display;
 import android.view.Surface;
+import android.view.TextureView;
 import android.view.WindowManager;
 import com.core.camera.option.*;
 import com.core.camera.utils.Size;
@@ -141,5 +144,27 @@ public abstract class CameraController implements CameraPreview.PreviewCallback 
             result = (info.orientation - degrees + 360) % 360;
         }
         return result;
+    }
+
+    /**
+     * 翻转变化
+     *
+     * @param view       当前承载预览的view
+     * @param previewW   预览图像的宽
+     * @param previewH   预览图像的高
+     */
+    protected void configureTransform(TextureView view, int previewW, int previewH) {
+        Matrix matrix = new Matrix();
+        RectF viewRect = new RectF(0, 0, view.getWidth(), view.getHeight());
+        RectF bufferRect = new RectF(0, 0, previewH, previewW);
+        float centerX = viewRect.centerX();
+        float centerY = viewRect.centerY();
+        bufferRect.offset(centerX - bufferRect.centerX(), centerY - bufferRect.centerY());
+        matrix.setRectToRect(viewRect, bufferRect, Matrix.ScaleToFit.FILL);
+        float scale = Math.max((float) view.getHeight() / previewH, (float) view.getWidth() / previewW);
+        matrix.postScale(scale, scale, centerX, centerY);
+        matrix.postRotate(270, centerX, centerY);
+
+        view.setTransform(matrix);
     }
 }

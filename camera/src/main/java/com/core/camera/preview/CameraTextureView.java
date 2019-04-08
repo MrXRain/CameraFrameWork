@@ -3,6 +3,7 @@ package com.core.camera.preview;
 import android.content.Context;
 import android.graphics.SurfaceTexture;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.*;
 import com.core.camera.CameraPreview;
 import com.rain.camera.R;
@@ -22,7 +23,8 @@ public class CameraTextureView extends CameraPreview<TextureView, SurfaceTexture
     @NonNull
     @Override
     protected TextureView onCreateView(Context context, ViewGroup parent) {
-        View view = LayoutInflater.from(context).inflate(R.layout.cameraview_texture_view,parent,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.cameraview_texture_view, parent, false);
+        parent.addView(view, 0);
         mTextureView = view.findViewById(R.id.texture_view);
         mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
             @Override
@@ -60,6 +62,12 @@ public class CameraTextureView extends CameraPreview<TextureView, SurfaceTexture
     @Override
     public Surface getSurface() {
         return new Surface(getOut());
+    }
+
+    @NonNull
+    @Override
+    public TextureView getView() {
+        return mTextureView;
     }
 
 

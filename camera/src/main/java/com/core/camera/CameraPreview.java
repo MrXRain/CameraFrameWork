@@ -61,4 +61,7 @@ public abstract class CameraPreview<T extends View, Out> {
 
     @NonNull
     public abstract Surface getSurface();
+
+    @NonNull
+    public abstract T getView();
 }

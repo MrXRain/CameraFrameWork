@@ -172,7 +172,12 @@ public class Camera3 extends CameraController {
                 byteBuffer.get(mBuffer, 0, n);
 
                 Frame frame = mFrameManger.getframe(mBuffer, mSize.getWidth(), mSize.getHeight(), ImageFormat.NV21);
-                mCameraCallback.dispathFrame(frame);
+
+                if (mCameraCallback != null) {
+                    mCameraCallback.dispathFrame(frame);
+                } else {
+                    throw new RuntimeException("cameraCallback must init");
+                }
             }
         }, UVCCamera.PIXEL_FORMAT_NV21);
     }

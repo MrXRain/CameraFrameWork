@@ -24,13 +24,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintHeight_percent="0.5"
+            app:layout_constraintHeight_percent="0.88"
             android:keepScreenOn="true"
-            app:cameraApiType="camera_2"
+            app:cameraApiType="camera_3"
             app:cameraWhiteBalance="auto"
-            app:cameraFacing="front"
-            app:cameraPreviewSize="v1080p"
+            app:cameraFacing="back"
+            app:cameraPreviewSize="v480p"
             app:cameraFlash="off"/>
 
     <Button
@@ -39,9 +38,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/camera"
-            app:layout_constraintVertical_bias="0.5"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_wb"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:text="switch"/>
 
     <Spinner
@@ -51,6 +49,7 @@
             app:layout_constraintTop_toBottomOf="@id/camera"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.2"
             android:text="flash"/>
 
     <Spinner
@@ -60,15 +59,17 @@
             android:text="whitebalance"
             app:layout_constraintStart_toEndOf="@id/btn_flash"
             app:layout_constraintTop_toBottomOf="@id/camera"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.2"/>
 
     <Spinner
+            android:id="@+id/btn_hdr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_hdr"
             app:layout_constraintStart_toEndOf="@id/btn_wb"
             app:layout_constraintTop_toBottomOf="@id/camera"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.2"
             android:text="hdr"/>
 
 </android.support.constraint.ConstraintLayout>

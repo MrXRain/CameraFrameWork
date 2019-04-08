@@ -59,4 +59,10 @@ public class CameraSurfaceView extends CameraPreview<SurfaceView, SurfaceHolder>
     public Surface getSurface() {
         return getOut().getSurface();
     }
+
+    @NonNull
+    @Override
+    public SurfaceView getView() {
+        return mSurfaceView;
+    }
 }

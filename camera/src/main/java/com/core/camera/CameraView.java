@@ -34,6 +34,8 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
 
     private Lifecycle mLifecycle;
 
+    private CameraType mType;
+
     public CameraView(@NonNull Context context) {
         this(context, null);
     }
@@ -67,6 +69,7 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
         ta.recycle();
 
         mCameraController = initCameraController(type);
+        mType = type;
 
         setFacing(facing);
         setWhiteBalance(whiteBalance);

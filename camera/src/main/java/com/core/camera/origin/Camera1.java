@@ -114,11 +114,13 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
     @Override
     @WorkerThread
     protected void onStop() {
-        mCamera.setPreviewCallbackWithBuffer(null);
-        mCamera.stopPreview();
-        mCamera.release();
-        mCamera = null;
-        isOpen = false;
+        if (mCamera != null) {
+            mCamera.setPreviewCallbackWithBuffer(null);
+            mCamera.stopPreview();
+            mCamera.release();
+            mCamera = null;
+            isOpen = false;
+        }
     }
 
     @Override
