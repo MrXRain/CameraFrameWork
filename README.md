@@ -1,4 +1,4 @@
-Camera框架
+# Camera框架
 
 * ##框架说明
 
@@ -8,7 +8,7 @@ Camera框架
 
   * 相机权限声明
 
-    ```
+    ```xml
      <uses-permission android:name="android.permission.CAMERA"/>
      <uses-feature android:name="android.hardware.camera"/>
      <uses-feature android:name="android.hardware.camera.autofocus"/>

@@ -1,0 +1,24 @@
+ext {
+    bintrayRepo = 'core-moudle'
+    bintrayName = 'Camera'
+
+    //publishedGroupId:artifact:libraryVersion 构成开源库的唯一路径
+    publishedGroupId = 'com.core.camera'
+    artifact = 'camera'
+    libraryVersion = '1.0.0'
+
+    //开源库的描述
+    libraryName = 'Camera'
+    libraryDescription = '相机框架'
+    siteUrl = 'https://github.com/MrXRain/CameraFrameWork'
+
+    gitUrl = 'https://github.com/MrXRain/CameraFrameWork.git'
+
+    developerId = 'Rain'
+    developerName = 'Rain'
+    developerEmail = '280624877@qq.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}

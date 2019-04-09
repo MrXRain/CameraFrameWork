@@ -29,7 +29,7 @@
             app:cameraApiType="camera_3"
             app:cameraWhiteBalance="auto"
             app:cameraFacing="back"
-            app:cameraPreviewSize="v480p"
+            app:cameraPreviewSize="v1080p"
             app:cameraFlash="off"/>
 
     <Button

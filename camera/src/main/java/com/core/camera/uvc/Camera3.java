@@ -158,8 +158,8 @@ public class Camera3 extends CameraController {
             mUVCCamera.setPreviewDisplay(mPreview.getSurface());
         }
 
-        mUVCCamera.setPreviewSize(1280, 720, UVCCamera.PIXEL_FORMAT_NV21);
-        mBuffer = new byte[1280 * 720 * ImageFormat.getBitsPerPixel(ImageFormat.NV21) / 8];
+        mUVCCamera.setPreviewSize(mSize.getWidth(), mSize.getHeight(), UVCCamera.PIXEL_FORMAT_NV21);
+        mBuffer = new byte[mSize.getWidth() * mSize.getHeight() * ImageFormat.getBitsPerPixel(ImageFormat.NV21) / 8];
         mUVCCamera.startPreview();
 
         mUVCCamera.setFrameCallback(new IFrameCallback() {

@@ -28,6 +28,10 @@ android {
             jniLibs.srcDir 'libs'
         }
     }
+
+    lintOptions{
+        abortOnError false
+    }
 }
 
 dependencies {
@@ -38,3 +42,11 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
+
+task javadoc(type: Javadoc) {
+    failOnError false
+}
+
+apply from: "$rootDir/publish_jcenter.gradle"
+apply from: "$rootDir/install.gradle"
+apply from: "$rootDir/bintray.gradle"
