@@ -26,12 +26,8 @@ public class CameraOptions {
     private Set<Hdr> supportedHdr = new HashSet<>(2);
     private Set<PreviewSize> supportSize = new HashSet<>(3);
 
-    public CameraOptions() {
-
-    }
-
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    public CameraOptions(CameraManager cameraManager, String cameraId) {
+    public CameraOptions(CameraManager cameraManager) {
         Mapper.Mapper2 mapper2 = new Mapper.Mapper2();
 
         try {
@@ -42,6 +38,14 @@ public class CameraOptions {
                 if (value != null) supportedFacing.add(value);
             }
 
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    public void initCameraParams(CameraManager cameraManager, Mapper.Mapper2 mapper2, String cameraId) {
+        try {
             CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId);
 
             // PreviewSize
@@ -83,16 +87,12 @@ public class CameraOptions {
                     if (value != null) supportedHdr.add(value);
                 }
             }
-
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
     }
 
-    public CameraOptions(Camera.Parameters parameters) {
-
-        List<String> strings;
-
+    public CameraOptions() {
         Mapper.Mapper1 mapper = new Mapper.Mapper1();
 
         // Facing
@@ -102,6 +102,10 @@ public class CameraOptions {
             Facing value = mapper.put(Facing.class, cameraInfo.facing);
             if (value != null) supportedFacing.add(value);
         }
+    }
+
+    public void initCameraParams(Camera.Parameters parameters, Mapper.Mapper1 mapper) {
+        List<String> strings;
 
         // WB
         strings = parameters.getSupportedWhiteBalance();

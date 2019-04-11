@@ -56,6 +56,10 @@ public class Camera2 extends CameraController {
         super(context);
 
         mCameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
+        if (mCameraManager != null) {
+            mCameraOptions = new CameraOptions(mCameraManager);
+
+        }
         mapper2 = new Mapper.Mapper2();
     }
 
@@ -64,11 +68,10 @@ public class Camera2 extends CameraController {
     protected void onStart() {
         try {
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(mContext, R.string.camera_permission,Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, R.string.camera_permission, Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            mCameraOptions = new CameraOptions(mCameraManager, mCameraId);
             mSize = mapper2.getPreviewSize(mPreSize);
 
             mCameraManager.openCamera(mCameraId, new CameraDevice.StateCallback() {
@@ -226,7 +229,12 @@ public class Camera2 extends CameraController {
     protected void setFacing(Facing facing) {
         mFacing = facing;
 
-        mCameraId = String.valueOf(facing.value());
+        if (mCameraOptions.getSupport(facing)) {
+            int value = mapper2.getFacing(facing);
+            mCameraId = String.valueOf(value);
+
+            mCameraOptions.initCameraParams(mCameraManager, mapper2, mCameraId);
+        }
     }
 
     @Override

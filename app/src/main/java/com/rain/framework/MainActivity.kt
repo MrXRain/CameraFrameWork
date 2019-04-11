@@ -10,8 +10,6 @@ import android.widget.Button
 import android.widget.Spinner
 import com.core.camera.CameraCallback
 import com.core.camera.CameraView
-import com.core.camera.Frame
-import com.core.camera.option.Facing
 import com.core.camera.option.Flash
 import com.core.camera.option.Hdr
 import com.core.camera.option.WhiteBalance

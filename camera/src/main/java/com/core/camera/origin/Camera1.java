@@ -40,6 +40,7 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
     public Camera1(Context context) {
         super(context);
 
+        mCameraOptions = new CameraOptions();
         mapper1 = new Mapper.Mapper1();
     }
 
@@ -57,7 +58,7 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
             }
 
             parameters = mCamera.getParameters();
-            mCameraOptions = new CameraOptions(parameters);
+            mCameraOptions.initCameraParams(parameters,mapper1);
 
             applyCameraParams();
 
@@ -126,7 +127,10 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
     @Override
     protected void setFacing(Facing facing) {
         mFacing = facing;
-        mCameraID = facing.value();
+
+        if (mCameraOptions.getSupport(facing)) {
+            mCameraID = mapper1.getFacing(facing);
+        }
     }
 
     @Override
