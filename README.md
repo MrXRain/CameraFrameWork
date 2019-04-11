@@ -1,10 +1,15 @@
 # Camera框架
 
-* ##框架说明
+* ## 框架说明
 
 ​	目前框架中集成了camera1、camera2、uvc三种相机的使用，三种相机方式均可设置视频预览的尺寸，其中camera1、camera2还支持白平衡、HDR、闪光灯、前后置等设置方法，**uvc相机对以上几个特性暂未添加支持**
 
-* ##基础使用
+* ## 基础使用
+
+  * 添加依赖
+    ```java
+     implementation 'com.core.camera:camera:1.0.0'
+    ```
 
   * 相机权限声明
 
@@ -20,7 +25,7 @@
 
   * 布局添加文件
 
-    ```java
+    ```xml
     <com.core.camera.CameraView
             android:id="@+id/camera"
             android:layout_width="0dp"
@@ -56,7 +61,7 @@
 
     **需将该控件实例化后，在Activity或事Fragment中注册当前页面的生命周期回调，注册完成之后，即可实现相机的自动开关操作**
 
-* ##进阶使用
+* ## 进阶使用
 
   * 数据预览回调
 
