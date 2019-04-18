@@ -26,7 +26,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintHeight_percent="0.88"
             android:keepScreenOn="true"
-            app:cameraApiType="camera_2"
+            app:cameraApiType="camera_3"
             app:cameraWhiteBalance="auto"
             app:cameraFacing="back"
             app:cameraPreviewSize="v1080p"
@@ -71,5 +71,15 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.2"
             android:text="hdr"/>
+
+    <Button
+            android:id="@+id/btn_capture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/btn_hdr"
+            app:layout_constraintTop_toTopOf="@id/btn_hdr"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="capture"
+            app:layout_constraintHorizontal_bias="0.776"/>
 
 </android.support.constraint.ConstraintLayout>

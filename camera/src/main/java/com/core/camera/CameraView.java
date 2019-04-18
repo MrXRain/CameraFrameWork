@@ -116,7 +116,7 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
         mCameraController.setPreview(mPreview);
     }
 
-    public void setCameraCallback(CameraCallback cameraCallback) {
+    public void setCameraCallback(final CameraCallback cameraCallback) {
         mCameraController.mCameraCallback = cameraCallback;
     }
 
@@ -257,6 +257,15 @@ public class CameraView extends FrameLayout implements LifecycleObserver {
      */
     public PreviewSize getPreviewSize() {
         return mCameraController.getPreviewSize();
+    }
+
+    /**
+     * get a picture
+     * @see Picture
+     */
+    public void takePicture(final CameraJpegCallback jpegCallback) {
+        mCameraController.mJpegCallback = jpegCallback;
+        mCameraController.takePicture();
     }
 
 }

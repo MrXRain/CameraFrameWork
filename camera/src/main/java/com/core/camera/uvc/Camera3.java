@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.usb.UsbDevice;
+import android.opengl.GLES20;
 import android.support.annotation.WorkerThread;
 import android.view.SurfaceHolder;
 import com.core.camera.*;
@@ -13,6 +14,7 @@ import com.serenegiant.usb.*;
 import com.rain.camera.R;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.List;
 
 /**
@@ -34,6 +36,8 @@ public class Camera3 extends CameraController {
     private Size mSize;
 
     private byte[] mBuffer;
+
+    private boolean isTake;
 
     public Camera3(Context context) {
         super(context);
@@ -116,7 +120,7 @@ public class Camera3 extends CameraController {
 
     @Override
     protected void setFacing(Facing facing) {
-
+        mFacing = facing;
     }
 
     @Override
@@ -144,6 +148,11 @@ public class Camera3 extends CameraController {
     }
 
     @Override
+    protected void takePicture() {
+        isTake = true;
+    }
+
+    @Override
     public void onSurfaceAvailable() {
         if (isCameraAvaliable()) {
             bindSurface();
@@ -158,7 +167,7 @@ public class Camera3 extends CameraController {
             mUVCCamera.setPreviewDisplay(mPreview.getSurface());
         }
 
-        mUVCCamera.setPreviewSize(mSize.getWidth(), mSize.getHeight(), UVCCamera.PIXEL_FORMAT_NV21);
+        mUVCCamera.setPreviewSize(mSize.getWidth(), mSize.getHeight(), UVCCamera.FRAME_FORMAT_YUYV);
         mBuffer = new byte[mSize.getWidth() * mSize.getHeight() * ImageFormat.getBitsPerPixel(ImageFormat.NV21) / 8];
         mUVCCamera.startPreview();
 
@@ -174,12 +183,17 @@ public class Camera3 extends CameraController {
                 Frame frame = mFrameManger.getframe(mBuffer, mSize.getWidth(), mSize.getHeight(), ImageFormat.NV21);
 
                 if (mCameraCallback != null) {
-                    mCameraCallback.dispathFrame(frame);
+                    mCameraCallback.dispatchFrame(frame);
                 } else {
                     throw new RuntimeException("cameraCallback must init");
                 }
+
+                if (mJpegCallback != null && isTake) {
+                    mJpegCallback.dispatchPic(new Picture(mBuffer,mSize.getWidth(),mSize.getHeight()));
+                    isTake = false;
+                }
             }
-        }, UVCCamera.PIXEL_FORMAT_NV21);
+        }, UVCCamera.PIXEL_FORMAT_YUV420SP);
     }
 
     @Override

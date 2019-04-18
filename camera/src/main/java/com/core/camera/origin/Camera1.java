@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.support.annotation.WorkerThread;
 import android.support.v4.app.ActivityCompat;
 import android.view.SurfaceHolder;
@@ -49,7 +51,7 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
     protected void onStart() {
         try {
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(mContext, R.string.camera_permission,Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, R.string.camera_permission, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -58,7 +60,7 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
             }
 
             parameters = mCamera.getParameters();
-            mCameraOptions.initCameraParams(parameters,mapper1);
+            mCameraOptions.initCameraParams(parameters, mapper1);
 
             applyCameraParams();
 
@@ -93,7 +95,7 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
             parameters.setPreviewSize(mSize.getWidth(), mSize.getHeight());
         }
 
-        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_FIXED);
+        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         parameters.setPreviewFormat(ImageFormat.NV21);
         parameters.setPictureFormat(ImageFormat.JPEG);
 
@@ -166,6 +168,41 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
     }
 
     @Override
+    protected void takePicture() {
+        mCamera.autoFocus(new Camera.AutoFocusCallback() {
+            @Override
+            public void onAutoFocus(boolean success, Camera camera) {
+                if (success) {
+                    camera.takePicture(new Camera.ShutterCallback() {
+                        @Override
+                        public void onShutter() {
+                            mTone.stop();
+                            mTone.play();
+                        }
+                    }, null, new Camera.PictureCallback() {
+                        @Override
+                        public void onPictureTaken(byte[] data, Camera camera) {
+                            Camera.Size size = camera.getParameters().getPreviewSize();
+                            camera.getParameters().setPictureFormat(ImageFormat.JPEG);
+                            int width = size.width;
+                            int height = size.height;
+
+                            if (mJpegCallback == null) {
+                                throw new RuntimeException("jpegCallback must init");
+                            } else {
+                                mJpegCallback.dispatchPic(new Picture(data, width, height));
+                            }
+
+                            mCamera.cancelAutoFocus();
+                            mCamera.startPreview();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
 
         if (mPreBuffer == null) {
@@ -182,7 +219,7 @@ public class Camera1 extends CameraController implements Camera.PreviewCallback 
                 e.printStackTrace();
             }
         } else {
-            mCameraCallback.dispathFrame(frame);
+            mCameraCallback.dispatchFrame(frame);
         }
     }
 

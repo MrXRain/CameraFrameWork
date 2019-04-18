@@ -6,8 +6,10 @@ import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.*;
+import android.media.AudioManager;
 import android.media.Image;
 import android.media.ImageReader;
+import android.media.ToneGenerator;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
@@ -15,9 +17,11 @@ import android.support.annotation.WorkerThread;
 import android.support.v4.app.ActivityCompat;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
 import android.widget.Toast;
 import com.core.camera.*;
 import com.core.camera.option.*;
+import com.core.camera.utils.CameraUtils;
 import com.rain.camera.R;
 
 import java.nio.ByteBuffer;
@@ -47,6 +51,8 @@ public class Camera2 extends CameraController {
     private boolean isCameraOpened;
 
     private CaptureRequest.Builder mPreviewBuilder;
+
+    private CaptureRequest.Builder mCaptureBuilder;
 
     private CameraOptions mCameraOptions;
 
@@ -144,14 +150,11 @@ public class Camera2 extends CameraController {
 
     private void applyCameraParams() {
         try {
-            mPreviewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
-            if (mWhiteBalance == WhiteBalance.DEFAULT) {
-                mPreviewBuilder.set(CaptureRequest.CONTROL_AWB_MODE, CameraMetadata.CONTROL_AWB_MODE_AUTO);
-            } else {
-                if (mCameraOptions.getSupport(mWhiteBalance)) {
-                    int value = mapper2.getWhiteBalance(mWhiteBalance);
-                    mPreviewBuilder.set(CaptureRequest.CONTROL_AWB_MODE, value);
-                }
+            mPreviewBuilder.set(CaptureRequest.CONTROL_AF_MODE, CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+
+            if (mCameraOptions.getSupport(mWhiteBalance)) {
+                int value = mapper2.getWhiteBalance(mWhiteBalance);
+                mPreviewBuilder.set(CaptureRequest.CONTROL_AWB_MODE, value);
             }
 
             if (mCameraOptions.getSupport(mFlash)) {
@@ -178,17 +181,24 @@ public class Camera2 extends CameraController {
             @Override
             public void onImageAvailable(ImageReader reader) {
                 Image image = reader.acquireNextImage();
-                byte[] data = getDataFromImage(image);
+                byte[] data = CameraUtils.YUV_420_888toNV21(image);
 
                 Frame frame = mFrameManger.getframe(data, mSize.getWidth(), mSize.getHeight(), ImageFormat.NV21);
                 if (mCameraCallback == null) {
                     throw new RuntimeException("cameraCallback must init");
                 } else {
-                    mCameraCallback.dispathFrame(frame);
+                    mCameraCallback.dispatchFrame(frame);
                 }
+
+                if (mJpegCallback != null && isTakePic) {
+                    isTakePic = false;
+                    mJpegCallback.dispatchPic(new Picture(data, mSize.getWidth(), mSize.getHeight()));
+                }
+
                 image.close();
             }
         }, mHandler.getHandler());
+
 
     }
 
@@ -267,6 +277,35 @@ public class Camera2 extends CameraController {
     @Override
     protected void setPreviewSize(PreviewSize previewSize) {
         mPreSize = previewSize;
+    }
+
+    private boolean isTakePic;
+    @Override
+    protected void takePicture() {
+        try {
+            isTakePic = true;
+            mCaptureBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+            mCaptureBuilder.addTarget(mImageReader.getSurface());
+            mCaptureBuilder.set(CaptureRequest.CONTROL_AF_MODE,mPreviewBuilder.get(CaptureRequest.CONTROL_AF_MODE));
+            mPreviewSession.stopRepeating();
+            mTone.stop();
+            mTone.play();
+            mPreviewSession.capture(mCaptureBuilder.build(), new CameraCaptureSession.CaptureCallback() {
+                @Override
+                public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
+                    super.onCaptureCompleted(session, request, result);
+
+                    try {
+                        mPreviewSession.capture(mPreviewBuilder.build(),this,null);
+                        mPreviewSession.setRepeatingRequest(mPreviewBuilder.build(), null, mHandler.getHandler());
+                    } catch (CameraAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, null);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.RectF;
 import android.hardware.Camera;
+import android.media.*;
+import android.net.Uri;
 import android.view.Display;
 import android.view.Surface;
 import android.view.TextureView;
@@ -18,6 +20,8 @@ import com.core.camera.utils.WorkHandler;
  */
 public abstract class CameraController implements CameraPreview.PreviewCallback {
 
+    protected Ringtone mTone;
+    protected CameraJpegCallback mJpegCallback;
     protected CameraCallback mCameraCallback;
     protected WorkHandler mHandler;
     protected CameraPreview mPreview;
@@ -34,6 +38,7 @@ public abstract class CameraController implements CameraPreview.PreviewCallback 
         mHandler = WorkHandler.get("CameraWork");
         mContext = context;
         mFrameManger = new FrameManger(2);
+        mTone = RingtoneManager.getRingtone(context, Uri.parse("file:///system/media/audio/ui/camera_click.ogg"));
     }
 
     protected void setPreview(CameraPreview preview) {
@@ -83,6 +88,8 @@ public abstract class CameraController implements CameraPreview.PreviewCallback 
     protected abstract void setFlash(Flash flash);
 
     protected abstract void setPreviewSize(PreviewSize previewSize);
+
+    protected abstract void takePicture();
 
     final Facing getFacing() {
         return mFacing;
