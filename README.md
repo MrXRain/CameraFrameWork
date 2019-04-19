@@ -2,7 +2,7 @@
 
 * ## 框架说明
 
-​	目前框架中集成了camera1、camera2、uvc三种相机的使用，其中camera1、uvc的预览格式为NV21，camera2的预览格式为YUV420_888，三种相机方式均可设置视频预览的尺寸，其中camera1、camera2还支持白平衡、HDR、闪光灯、前后置等设置方法，**uvc相机对以上几个特性暂未添加支持**
+​	  目前框架中集成了camera1、camera2、uvc三种相机的使用，其中camera1、uvc的预览格式为NV21，camera2的预览格式为YUV420_888，三种相机方式均可设置视频预览的尺寸，其中camera1、camera2还支持白平衡、HDR、闪光灯、前后置等设置方法，**uvc相机对以上几个特性暂未添加支持**
 
 * ## 基础使用
 
@@ -147,13 +147,13 @@
     public void setPreviewSize(PreviewSize previewSize)
     ```
 
- * 拍照
-   ```java
-   /**
-    * get a picture
-    * @see Picture
-    */
-   public void takePicture(final CameraJpegCallback jpegCallback)
-   ```
-   **采用camera1返回的照片格式为jpeg，camera2返回的为yuv420_888，需采用CameraUtils.YUV_420_888toNV21()方法先进行格式转换，再采用yuv2Image()转换，
-   uvc返回的为nv21,需采用CameraUtils.yuv2Image()进行格式转换**
+  * 拍照
+    ```java
+    /**
+     * get a picture
+     * @see Picture
+     */
+    public void takePicture(final CameraJpegCallback jpegCallback)
+    ```
+    **采用camera1返回的照片格式为jpeg，camera2返回的为yuv420_888，需采用CameraUtils.YUV_420_888toNV21()方法先进行格式转换，再采用yuv2Image()转换，
+    uvc返回的为nv21,需采用CameraUtils.yuv2Image()进行格式转换**
