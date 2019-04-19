@@ -5,7 +5,7 @@ ext {
     //publishedGroupId:artifact:libraryVersion 构成开源库的唯一路径
     publishedGroupId = 'com.core.camera'
     artifact = 'camera'
-    libraryVersion = '1.0.0'
+    libraryVersion = '1.0.1'
 
     //开源库的描述
     libraryName = 'Camera'
